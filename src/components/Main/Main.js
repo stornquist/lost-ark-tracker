@@ -1,6 +1,7 @@
 import React from 'react';
 import DataTable, { createTheme } from 'react-data-table-component';
 import NewCharacter from '../NewCharacter';
+import NewTask from '../NewTask/NewTask';
 import { useMainColumns } from './hooks/columns';
 
 createTheme('custom', {
@@ -23,7 +24,8 @@ const Main = ({ data, setData }) => {
   const columns = useMainColumns({ data, handleTaskComplete });
   return (
     <div className="m-32">
-      <NewCharacter />
+      <NewCharacter className="inline mr-2" />
+      <NewTask className="inline" />
       <DataTable data={data} columns={columns} theme="custom" />
     </div>
   );
