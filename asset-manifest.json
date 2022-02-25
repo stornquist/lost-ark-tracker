@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/lost-ark-tracker/static/css/main.2fd27e63.css",
+    "main.js": "/lost-ark-tracker/static/js/main.cb56a74e.js",
+    "index.html": "/lost-ark-tracker/index.html",
+    "main.2fd27e63.css.map": "/lost-ark-tracker/static/css/main.2fd27e63.css.map",
+    "main.cb56a74e.js.map": "/lost-ark-tracker/static/js/main.cb56a74e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2fd27e63.css",
+    "static/js/main.cb56a74e.js"
+  ]
+}
