@@ -29,6 +29,7 @@ export const useMainColumns = ({ data, handleTaskComplete: setTaskComplete }) =>
             return (
               <input
                 type="checkbox"
+                className="appearance-none w-4 h-4 bg-red-400 checked:bg-green-400 rounded-sm"
                 checked={row.tasks[taskName].completed}
                 onChange={() =>
                   setTaskComplete(
