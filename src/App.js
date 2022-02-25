@@ -1,7 +1,20 @@
 import Main from './components/Main';
+import { useLocalStorage } from './utils/localStorage';
 
 function App() {
-  return <Main />;
+  const [data, setData] = useLocalStorage('data', [
+    {
+      id: 1,
+      name: 'Test',
+      tasks: {
+        chaos: { type: 'daily', completed: false },
+        guardian: { type: 'daily', completed: false },
+        abyss: { type: 'weekly', completed: false },
+      },
+    },
+  ]);
+
+  return <Main data={data} setData={setData} />;
 }
 
 export default App;
