@@ -1,5 +1,6 @@
 import React from 'react';
 import DataTable, { createTheme } from 'react-data-table-component';
+import NewCharacter from '../NewCharacter';
 import { useMainColumns } from './hooks/columns';
 
 createTheme('custom', {
@@ -22,6 +23,7 @@ const Main = ({ data, setData }) => {
   const columns = useMainColumns({ data, handleTaskComplete });
   return (
     <div className="m-32">
+      <NewCharacter />
       <DataTable data={data} columns={columns} theme="custom" />
     </div>
   );
