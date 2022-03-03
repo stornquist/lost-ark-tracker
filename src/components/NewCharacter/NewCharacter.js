@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNewCharacter } from '../../utils/newCharacter';
 import Button from '../Button';
 import Modal from '../Modal';
 
@@ -11,12 +12,24 @@ const modalFields = [
   },
 ];
 
-const NewCharacter = ({ className }) => {
+const NewCharacter = ({ className, data, setData }) => {
+  const newCharacter = useNewCharacter(data);
   const [modal, showModal] = useState(false);
+
+  const handleSubmit = ({ name }) => {
+    setData([...data, newCharacter(name)]);
+    showModal(false);
+  };
 
   return (
     <div className={className}>
-      {modal && <Modal fields={modalFields} onClose={() => showModal(false)} />}
+      {modal && (
+        <Modal
+          fields={modalFields}
+          onClose={() => showModal(false)}
+          onSubmit={handleSubmit}
+        />
+      )}
       <Button
         color="green"
         size="md"

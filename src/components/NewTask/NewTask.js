@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { addNewTask } from '../../utils/newTask';
 import Button from '../Button';
 import Modal from '../Modal';
 
@@ -21,12 +22,23 @@ const modalFields = [
   },
 ];
 
-const NewTask = ({ className }) => {
+const NewTask = ({ className, data, setData }) => {
   const [modal, showModal] = useState(false);
+
+  const handleSubmit = task => {
+    addNewTask(data, setData, task);
+    showModal(false);
+  };
 
   return (
     <div className={className}>
-      {modal && <Modal fields={modalFields} onClose={() => showModal(false)} />}
+      {modal && (
+        <Modal
+          fields={modalFields}
+          onClose={() => showModal(false)}
+          onSubmit={handleSubmit}
+        />
+      )}
       <Button
         color="green"
         size="md"
