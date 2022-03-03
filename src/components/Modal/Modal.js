@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Button from '../Button';
 import { IoClose } from 'react-icons/io5';
 
-const Modal = ({ fields, onSave, onClose }) => {
+const Modal = ({ fields, onSubmit, onClose, closeOnEscape = true }) => {
+  const modalEscListener = useCallback(
+    () => e => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const obj = {};
+    for (const [key, val] of formData.entries()) {
+      obj[key] = val;
+    }
+    onSubmit(obj);
+  };
+
+  useEffect(() => {
+    if (!closeOnEscape) return;
+
+    document.addEventListener('keydown', modalEscListener);
+    return () => document.removeEventListener('keydown', modalEscListener);
+  }, [closeOnEscape, modalEscListener]);
+
   return (
     <>
       {/* THIS IS THE BLURRY BACKGROUND */}
@@ -16,43 +42,52 @@ const Modal = ({ fields, onSave, onClose }) => {
           <div className="absolute right-2 top-2">
             <IoClose size="20" onClick={onClose} className="text-gray-400" />
           </div>
-          <div className="p-12">
-            {fields.map((field, index) => (
-              <div>
-                {field.label && (
-                  <p className="italic text-gray-400 text-sm">{field.label}</p>
-                )}
-                {field.type === 'text' && (
-                  <input
-                    autoFocus={index === 0}
-                    name={field.name}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    className="px-2 py-1 rounded-sm bg-gray-700 focus:caret-white mb-2 w-full"
-                  />
-                )}
-                {field.type === 'dropdown' && (
-                  <select
-                    name={field.name}
-                    className="px-2 py-1 rounded-sm text-gray-300 bg-gray-700 w-full"
-                  >
-                    {field.options.map(option => (
-                      <option value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-end items-end pr-4">
-            <Button
-              className="px-5 py-1"
-              color="red"
-              label="close"
-              onClick={onClose}
-            />
-            <Button className="px-5 py-1 ml-1" color="green" label="OK" />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="p-12">
+              {fields.map((field, index) => (
+                <div>
+                  {field.label && (
+                    <p className="italic text-gray-400 text-sm">
+                      {field.label}
+                    </p>
+                  )}
+                  {field.type === 'text' && (
+                    <input
+                      autoFocus={index === 0}
+                      name={field.name}
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      className="px-2 py-1 rounded-sm bg-gray-700 focus:caret-white mb-2 w-full"
+                    />
+                  )}
+                  {field.type === 'dropdown' && (
+                    <select
+                      name={field.name}
+                      className="px-2 py-1 rounded-sm text-gray-300 bg-gray-700 w-full"
+                    >
+                      {field.options.map(option => (
+                        <option value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end items-end pr-4">
+              <Button
+                className="px-5 py-1"
+                color="red"
+                label="close"
+                onClick={onClose}
+              />
+              <Button
+                className="px-5 py-1 ml-1"
+                color="green"
+                label="OK"
+                type="submit"
+              />
+            </div>
+          </form>
         </div>
       </div>
     </>
