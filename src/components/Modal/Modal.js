@@ -11,7 +11,7 @@ const Modal = ({
   onDelete,
 }) => {
   const modalEscListener = useCallback(
-    () => e => {
+    e => {
       if (e.key === 'Escape') {
         onClose();
       }
