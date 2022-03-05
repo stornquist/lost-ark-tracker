@@ -4,13 +4,8 @@ import { useCheckReset } from '../../utils/checkReset';
 import {
   useCharacters,
   useDeleteCharacter,
-  useUpsertCharacter,
 } from '../../utils/queries/characters';
-import {
-  useDeleteTask,
-  useTasks,
-  useUpsertTask,
-} from '../../utils/queries/tasks';
+import { useDeleteTask, useTasks } from '../../utils/queries/tasks';
 import {
   useTaskStatuses,
   useUpsertTaskStatus,
@@ -32,10 +27,8 @@ createTheme('custom', {
 
 const Main = () => {
   const { data: tasks = [] } = useTasks();
-  const { mutate: upsertTask } = useUpsertTask();
   const { mutate: deleteTask } = useDeleteTask();
   const { data: characters = [] } = useCharacters();
-  const { mutate: upsertCharacter } = useUpsertCharacter();
   const { mutate: deleteCharacter } = useDeleteCharacter();
   const { data: taskStatuses } = useTaskStatuses();
   const { mutate: upsertTaskStatus } = useUpsertTaskStatus();
@@ -64,13 +57,12 @@ const Main = () => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [checkReset]);
 
   const columns = useCharactersColumns({
     tasks,
     taskStatuses,
     onTaskStatusClick: handleTaskStatusClick,
-    onDeleteCharacter: deleteCharacter,
     onTaskClick: handleTaskClick,
     onCharacterClick: handleCharacterClick,
   });

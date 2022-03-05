@@ -9,7 +9,7 @@ const Errors = {
 export const getCharacter = async id => {
   const characters = await getCharacters();
   const character = characters.find(c => c.id === id);
-  if (!character) throw new Error('character not found');
+  if (!character) throw new Error(Errors.notFound);
 
   return character;
 };
@@ -49,7 +49,7 @@ export const updateCharacter = async (id, data) => {
 
   const characters = await getCharacters();
   const index = characters.findIndex(c => c.id === id);
-  if (index === -1) throw new Error('character not found');
+  if (index === -1) throw new Error(Errors.notFound);
 
   characters[index] = { ...characters[index], ...value };
   localStorage.setItem('characters', JSON.stringify(characters));

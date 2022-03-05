@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import Button from '../Button';
 import { IoClose } from 'react-icons/io5';
-import { deleteTask } from '../../server/services/tasks';
 
 const Modal = ({
   fields,

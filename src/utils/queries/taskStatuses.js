@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from 'react-query';
-import { queryClient } from '../../App';
 import {
   createTaskStatus,
   deleteTaskStatus,

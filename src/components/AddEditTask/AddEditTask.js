@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDeleteTask, useUpsertTask } from '../../utils/queries/tasks';
-import Button from '../Button';
 import Modal from '../Modal';
 
 const modalFields = [

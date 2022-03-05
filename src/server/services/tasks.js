@@ -9,7 +9,7 @@ const Errors = {
 export const getTask = async id => {
   const tasks = await getTasks();
   const task = tasks.find(c => c.id === id);
-  if (!task) throw new Error('character not found');
+  if (!task) throw new Error(Errors.notFound);
 
   return task;
 };
@@ -50,7 +50,7 @@ export const updateTask = async (id, data) => {
 
   const tasks = await getTasks();
   const index = tasks.findIndex(c => c.id === id);
-  if (index === -1) throw new Error('task not found');
+  if (index === -1) throw new Error(Errors.notFound);
 
   tasks[index] = { ...tasks[index], ...value };
   localStorage.setItem('tasks', JSON.stringify(tasks));

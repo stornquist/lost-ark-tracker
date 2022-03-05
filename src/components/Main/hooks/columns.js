@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
-import { BiTrash } from 'react-icons/bi';
 
 export const useCharactersColumns = ({
   tasks,
   taskStatuses,
   onTaskStatusClick,
-  onDeleteCharacter,
   onTaskClick,
   onCharacterClick,
 }) =>
@@ -44,5 +42,5 @@ export const useCharactersColumns = ({
         };
       }),
     ],
-    [tasks, taskStatuses, onTaskStatusClick, onTaskClick, onDeleteCharacter]
+    [tasks, taskStatuses, onTaskStatusClick, onTaskClick, onCharacterClick]
   );
