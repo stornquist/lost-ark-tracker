@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DataTable, { createTheme } from 'react-data-table-component';
-import NewCharacter from '../NewCharacter';
-import NewTask from '../NewTask/NewTask';
+import { useCheckReset } from '../../utils/checkReset';
+import {
+  useCharacters,
+  useDeleteCharacter,
+  useUpsertCharacter,
+} from '../../utils/queries/characters';
+import {
+  useDeleteTask,
+  useTasks,
+  useUpsertTask,
+} from '../../utils/queries/tasks';
+import {
+  useTaskStatuses,
+  useUpsertTaskStatus,
+} from '../../utils/queries/taskStatuses';
+import AddEditCharacter from '../AddEditCharacter';
+import AddEditTask from '../AddEditTask/AddEditTask';
+import Button from '../Button';
 import { useCharactersColumns } from './hooks/columns';
 
 createTheme('custom', {
@@ -14,30 +30,88 @@ createTheme('custom', {
   },
 });
 
-const Main = ({ data, setData }) => {
-  const handleTaskStatusChange = (id, task, status) => {
-    const index = data.findIndex(r => r.id === id);
-    data[index].tasks[task].completed = status;
-    setData([...data]);
+const Main = () => {
+  const { data: tasks = [] } = useTasks();
+  const { mutate: upsertTask } = useUpsertTask();
+  const { mutate: deleteTask } = useDeleteTask();
+  const { data: characters = [] } = useCharacters();
+  const { mutate: upsertCharacter } = useUpsertCharacter();
+  const { mutate: deleteCharacter } = useDeleteCharacter();
+  const { data: taskStatuses } = useTaskStatuses();
+  const { mutate: upsertTaskStatus } = useUpsertTaskStatus();
+  const checkReset = useCheckReset();
+  const [character, setCharacter] = useState(null);
+  const [task, setTask] = useState(null);
+  const [characterModal, showCharacterModal] = useState(false);
+  const [taskModal, showTaskModal] = useState(false);
+
+  const handleTaskStatusClick = taskStatus => {
+    upsertTaskStatus({ ...taskStatus, completed: !taskStatus.completed });
   };
 
-  const handleDeleteCharacter = character => {
-    const index = data.findIndex(c => c.id === character.id);
-    data.splice(index, 1);
-    setData([...data]);
+  const handleTaskClick = task => {
+    setTask(task);
+    showTaskModal(true);
   };
+
+  const handleCharacterClick = character => {
+    setCharacter(character);
+    showCharacterModal(true);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(checkReset, 10000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   const columns = useCharactersColumns({
-    data,
-    handleTaskStatusChange,
-    onDeleteCharacter: handleDeleteCharacter,
+    tasks,
+    taskStatuses,
+    onTaskStatusClick: handleTaskStatusClick,
+    onDeleteCharacter: deleteCharacter,
+    onTaskClick: handleTaskClick,
+    onCharacterClick: handleCharacterClick,
   });
 
   return (
     <div className="m-32">
-      <NewCharacter className="inline mr-2" data={data} setData={setData} />
-      <NewTask className="inline" data={data} setData={setData} />
-      <DataTable data={data} columns={columns} theme="custom" />
+      {characterModal && (
+        <AddEditCharacter
+          className="inline mr-2"
+          character={character}
+          onClose={() => {
+            setCharacter(null);
+            showCharacterModal(false);
+          }}
+          onDelete={deleteCharacter}
+        />
+      )}
+      {taskModal && (
+        <AddEditTask
+          className="inline"
+          task={task}
+          onClose={() => {
+            setTask(null);
+            showTaskModal(false);
+          }}
+          onDelete={deleteTask}
+        />
+      )}
+      <Button
+        color="green"
+        size="md"
+        onClick={() => showCharacterModal(true)}
+        label="New character"
+      />
+      <Button
+        color="green"
+        size="md"
+        onClick={() => showTaskModal(true)}
+        label="New task"
+      />
+      <DataTable data={characters} columns={columns} theme="custom" />
     </div>
   );
 };

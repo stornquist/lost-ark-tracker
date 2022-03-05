@@ -1,84 +1,47 @@
-import { subDays } from 'date-fns';
-import { format } from 'date-fns/esm';
-import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Main from './components/Main';
-import { useLocalStorage } from './utils/localStorage';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const defaultOptions = {
+  staleTime: 10000,
+  onError: err => {
+    toast.error(err.message);
+  },
+};
+
+export const queryClient = new QueryClient({
+  defaultOptions,
+});
+queryClient.setMutationDefaults('reset', {
+  ...defaultOptions,
+  onSuccess: () => queryClient.invalidateQueries('reset'),
+});
+queryClient.setMutationDefaults('characters', {
+  ...defaultOptions,
+  onSuccess: () => queryClient.invalidateQueries('characters'),
+});
+queryClient.setMutationDefaults('tasks', {
+  ...defaultOptions,
+  onSuccess: () => queryClient.invalidateQueries('tasks'),
+});
+queryClient.setMutationDefaults('task_statuses', {
+  ...defaultOptions,
+  onSuccess: () => queryClient.invalidateQueries('task_statuses'),
+});
 
 function App() {
-  const [data, setData] = useLocalStorage('data');
-  const [lastDailyReset, setDailyReset] = useLocalStorage('daily_reset', '');
-  const [lastWeeklyReset, setWeeklyReset] = useLocalStorage('weekly_reset', '');
-
-  const resetDailyTasks = () => {
-    const newData = data.map(character => ({
-      ...character,
-      tasks: Object.entries(character.tasks).reduce((acc, [key, val]) => {
-        acc[key] = {
-          ...val,
-          completed: val.type === 'daily' ? false : val.completed,
-        };
-        return acc;
-      }, {}),
-    }));
-
-    setData(newData);
-  };
-  const resetWeeklyTasks = () => {
-    const newData = data.map(character => ({
-      ...character,
-      tasks: Object.entries(character.tasks).reduce((acc, [key, val]) => {
-        acc[key] = { ...val, completed: false };
-        return acc;
-      }, {}),
-    }));
-
-    setData(newData);
-  };
-
-  if (!data) {
-    setData([
-      {
-        id: 1,
-        name: 'Test',
-        tasks: {
-          'guild donate': { type: 'daily', completed: false },
-          chaos: { type: 'daily', completed: false },
-          guardian: { type: 'daily', completed: false },
-          abyss: { type: 'weekly', completed: false },
-        },
-      },
-    ]);
-  }
-
-  const checkReset = () => {
-    const now = new Date();
-    const time = now.getUTCHours();
-    const date = format(now, 'yyyy-MM-dd');
-    const aDayAgo = format(subDays(now, 1), 'yyyy-MM-dd');
-    const aWeekAgo = format(subDays(now, 7), 'yyyy-MM-dd');
-    if (!lastDailyReset) setDailyReset(aDayAgo);
-    if (!lastWeeklyReset) setWeeklyReset(aWeekAgo);
-
-    if (time >= 10 && lastDailyReset !== date) {
-      resetDailyTasks();
-      setDailyReset(date);
-    }
-
-    if (time > 10 && lastWeeklyReset !== date && now.getDay() === 4) {
-      resetWeeklyTasks();
-      setWeeklyReset(date);
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(checkReset, 10000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
-  if (!data) return null;
-  return <Main data={data} setData={setData} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Main />
+      <ToastContainer
+        theme="colored"
+        autoClose={5000}
+        position="bottom-right"
+      />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

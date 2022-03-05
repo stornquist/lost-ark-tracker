@@ -1,8 +1,16 @@
 import React, { useCallback, useEffect } from 'react';
 import Button from '../Button';
 import { IoClose } from 'react-icons/io5';
+import { deleteTask } from '../../server/services/tasks';
 
-const Modal = ({ fields, onSubmit, onClose, closeOnEscape = true }) => {
+const Modal = ({
+  fields,
+  onSubmit,
+  onClose,
+  closeOnEscape = true,
+  defaultValues,
+  onDelete,
+}) => {
   const modalEscListener = useCallback(
     () => e => {
       if (e.key === 'Escape') {
@@ -43,6 +51,9 @@ const Modal = ({ fields, onSubmit, onClose, closeOnEscape = true }) => {
             <IoClose size="20" onClick={onClose} className="text-gray-400" />
           </div>
           <form onSubmit={handleSubmit}>
+            {defaultValues?.id && (
+              <input type="hidden" value={defaultValues.id} />
+            )}
             <div className="p-12">
               {fields.map((field, index) => (
                 <div>
@@ -58,6 +69,9 @@ const Modal = ({ fields, onSubmit, onClose, closeOnEscape = true }) => {
                       type={field.type}
                       placeholder={field.placeholder}
                       className="px-2 py-1 rounded-sm bg-gray-700 focus:caret-white mb-2 w-full"
+                      defaultValue={
+                        defaultValues ? defaultValues[field.name] : ''
+                      }
                     />
                   )}
                   {field.type === 'dropdown' && (
@@ -73,19 +87,20 @@ const Modal = ({ fields, onSubmit, onClose, closeOnEscape = true }) => {
                 </div>
               ))}
             </div>
-            <div className="flex justify-end items-end pr-4">
-              <Button
-                className="px-5 py-1"
-                color="red"
-                label="close"
-                onClick={onClose}
-              />
-              <Button
-                className="px-5 py-1 ml-1"
-                color="green"
-                label="OK"
-                type="submit"
-              />
+            <div className="flex justify-end items-end px-4 w-full relative">
+              {defaultValues?.id && (
+                <Button
+                  className="absolute left-4"
+                  size="sm"
+                  color="red"
+                  label="delete"
+                  onClick={() => {
+                    onDelete(defaultValues);
+                  }}
+                />
+              )}
+              <Button size="sm" color="red" label="close" onClick={onClose} />
+              <Button size="sm" color="green" label="OK" type="submit" />
             </div>
           </form>
         </div>
