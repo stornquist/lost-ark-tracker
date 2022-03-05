@@ -64,11 +64,7 @@ function App() {
       setDailyReset(date);
     }
 
-    const daysSinceLastWeeklyReset = Math.floor(
-      (new Date(lastWeeklyReset).getTime() - now.getTime()) / (1000 * 3600 * 24)
-    );
-
-    if (time > 10 && daysSinceLastWeeklyReset > 6 && now.getDay() === 4) {
+    if (time > 10 && lastWeeklyReset !== date && now.getDay() === 4) {
       resetWeeklyTasks();
       setWeeklyReset(date);
     }
