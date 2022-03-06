@@ -22,7 +22,10 @@ export const getCharacters = async () => {
 };
 
 export const createCharacter = async data => {
-  const { value, error } = characterSchema.validate(data);
+  const { value, error } = characterSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const characters = await getCharacters();
@@ -44,7 +47,10 @@ export const createCharacter = async data => {
 };
 
 export const updateCharacter = async (id, data) => {
-  const { value, error } = characterSchema.validate(data);
+  const { value, error } = characterSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const characters = await getCharacters();

@@ -1,4 +1,6 @@
+import { format } from 'date-fns';
 import { taskStatusSchema } from '../schemas/taskStatus';
+import { getTasks } from './tasks';
 
 const Errors = {
   notFound: 'task status not found',
@@ -15,12 +17,20 @@ export const getTaskStatus = async id => {
 export const getTaskStatuses = async () => {
   const taskStatuses = localStorage.task_statuses;
   if (!taskStatuses) return [];
+  const statuses = JSON.parse(taskStatuses);
+  const tasks = await getTasks();
 
-  return JSON.parse(taskStatuses);
+  return statuses.map(status => ({
+    ...status,
+    task: tasks.find(t => t.id === status.task_id),
+  }));
 };
 
 export const createTaskStatus = async data => {
-  const { value, error } = taskStatusSchema.validate(data);
+  const { value, error } = taskStatusSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const taskStatuses = await getTaskStatuses();
@@ -34,7 +44,10 @@ export const createTaskStatus = async data => {
 };
 
 export const updateTaskStatus = async (id, data) => {
-  const { value, error } = taskStatusSchema.validate(data);
+  const { value, error } = taskStatusSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const taskStatuses = await getTaskStatuses();
@@ -60,14 +73,17 @@ export const resetWeeklyTasks = async () => {
     const { id, ...rest } = status;
     await updateTaskStatus(id, { ...rest, completed: false });
   }
+  localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd');
 };
 
 export const resetDailyTasks = async () => {
   const taskStatuses = await getTaskStatuses();
+
   for (const status of taskStatuses) {
-    if (status.type === 'daily') {
+    if (status.task.type === 'daily') {
       const { id, ...rest } = status;
       await updateTaskStatus(id, { ...rest, completed: false });
     }
   }
+  localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd');
 };

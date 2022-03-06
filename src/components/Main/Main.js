@@ -30,7 +30,7 @@ const Main = () => {
   const { mutate: deleteTask } = useDeleteTask();
   const { data: characters = [] } = useCharacters();
   const { mutate: deleteCharacter } = useDeleteCharacter();
-  const { data: taskStatuses } = useTaskStatuses();
+  const { data: taskStatuses = [] } = useTaskStatuses();
   const { mutate: upsertTaskStatus } = useUpsertTaskStatus();
   const checkReset = useCheckReset();
   const [character, setCharacter] = useState(null);

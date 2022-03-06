@@ -22,7 +22,10 @@ export const getTasks = async () => {
 };
 
 export const createTask = async data => {
-  const { value, error } = taskSchema.validate(data);
+  const { value, error } = taskSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const tasks = await getTasks();
@@ -45,7 +48,10 @@ export const createTask = async data => {
 };
 
 export const updateTask = async (id, data) => {
-  const { value, error } = taskSchema.validate(data);
+  const { value, error } = taskSchema.validate(data, {
+    stripUnknown: true,
+    allowUnknown: true,
+  });
   if (error) throw new Error(error);
 
   const tasks = await getTasks();
