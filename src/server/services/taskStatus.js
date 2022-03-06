@@ -69,21 +69,20 @@ export const deleteTaskStatus = async id => {
 export const resetWeeklyTasks = async () => {
   const taskStatuses = await getTaskStatuses();
   // weekly reset includes dailies so set all to false
-  for (const status of taskStatuses) {
-    const { id, ...rest } = status;
-    await updateTaskStatus(id, { ...rest, completed: false });
-  }
-  localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd');
+  localStorage.task_statuses = JSON.stringify(
+    taskStatuses.map(ts => ({ ...ts, completed: false }))
+  );
+  return (localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd'));
 };
 
 export const resetDailyTasks = async () => {
   const taskStatuses = await getTaskStatuses();
 
-  for (const status of taskStatuses) {
-    if (status.task.type === 'daily') {
-      const { id, ...rest } = status;
-      await updateTaskStatus(id, { ...rest, completed: false });
-    }
-  }
-  localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd');
+  localStorage.task_statuses = JSON.stringify(
+    taskStatuses.map(ts => ({
+      ...ts,
+      completed: ts.task.type === 'daily' ? false : ts.completed,
+    }))
+  );
+  return (localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd'));
 };
