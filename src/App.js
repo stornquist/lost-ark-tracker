@@ -16,19 +16,19 @@ export const queryClient = new QueryClient({
 });
 queryClient.setMutationDefaults('reset', {
   ...defaultOptions,
-  onSuccess: () => queryClient.invalidateQueries('reset'),
+  onSettled: () => queryClient.invalidateQueries('task_statuses'),
 });
 queryClient.setMutationDefaults('characters', {
   ...defaultOptions,
-  onSuccess: () => queryClient.invalidateQueries('characters'),
+  onSettled: () => queryClient.invalidateQueries('characters'),
 });
 queryClient.setMutationDefaults('tasks', {
   ...defaultOptions,
-  onSuccess: () => queryClient.invalidateQueries('tasks'),
+  onSettled: () => queryClient.invalidateQueries('tasks'),
 });
 queryClient.setMutationDefaults('task_statuses', {
   ...defaultOptions,
-  onSuccess: () => queryClient.invalidateQueries('task_statuses'),
+  onSettled: () => queryClient.invalidateQueries('task_statuses'),
 });
 
 function App() {
