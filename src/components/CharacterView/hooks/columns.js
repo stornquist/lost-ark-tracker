@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import Checkbox from '../../Checkbox/Checkbox';
 
 export const useCharactersColumns = ({
   tasks,
@@ -31,9 +32,7 @@ export const useCharactersColumns = ({
               s => s.task_id === id && row.id === s.character_id
             );
             return (
-              <input
-                type="checkbox"
-                className="appearance-none w-4 h-4 bg-red-400 checked:bg-green-400 rounded-sm"
+              <Checkbox
                 checked={taskStatus ? taskStatus.completed : false}
                 onChange={() => onTaskStatusClick(taskStatus)}
               />
