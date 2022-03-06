@@ -36,7 +36,11 @@ const CharacterList = ({ setTask, setCharacter }) => {
     onCharacterClick: setCharacter,
   });
 
-  return <DataTable data={characters} columns={columns} theme="custom" />;
+  return (
+    <div style={{ maxWidth: (tasks.length + 1) * 100 }}>
+      <DataTable data={characters} columns={columns} theme="custom" />
+    </div>
+  );
 };
 
 export default CharacterList;
