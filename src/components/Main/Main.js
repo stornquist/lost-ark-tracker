@@ -68,7 +68,7 @@ const Main = () => {
   });
 
   return (
-    <div className="m-32">
+    <div className="md:m-8 lg:m-24">
       {characterModal && (
         <AddEditCharacter
           className="inline mr-2"
