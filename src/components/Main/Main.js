@@ -26,11 +26,11 @@ const Main = () => {
       const time = now.getUTCHours();
       const date = format(now, 'yyyy-MM-dd');
 
-      if (time >= 10 && lastDailyReset !== date) {
+      if (lastDailyReset !== date && time >= 10) {
         resetDailies();
       }
 
-      if (time >= 10 && lastWeeklyReset !== date && now.getDay() === 4) {
+      if (now.getDay() === 4 && lastWeeklyReset !== date && time >= 10) {
         resetWeeklies();
       }
     }, 10000);
