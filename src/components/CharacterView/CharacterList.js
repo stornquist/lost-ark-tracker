@@ -37,7 +37,7 @@ const CharacterList = ({ setTask, setCharacter }) => {
   });
 
   return (
-    <div style={{ maxWidth: (tasks.length + 1) * 100 }}>
+    <div style={{ maxWidth: 150 + tasks.length * 100 }}>
       <DataTable data={characters} columns={columns} theme="custom" />
     </div>
   );

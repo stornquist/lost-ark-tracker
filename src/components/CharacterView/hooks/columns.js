@@ -21,8 +21,15 @@ export const useCharactersColumns = ({
       ...tasks.map(task => {
         const { id, name, type } = task;
         return {
+          grow: 0,
+          center: true,
+          maxWidth: 80,
           name: (
-            <div key={name + type} onClick={() => onTaskClick(task)}>
+            <div
+              key={name + type}
+              onClick={() => onTaskClick(task)}
+              className="flex flex-col items-center"
+            >
               {name}
               <p>{` (${type.charAt(0).toUpperCase()})`}</p>
             </div>
