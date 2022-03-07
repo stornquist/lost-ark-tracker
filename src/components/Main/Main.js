@@ -27,11 +27,10 @@ const Main = () => {
       const date = format(now, 'yyyy-MM-dd');
 
       if (time >= 10 && lastDailyReset !== date) {
-        console.log('resetting dailies');
         resetDailies();
       }
 
-      if (time > 10 && lastWeeklyReset !== date && now.getDay() === 4) {
+      if (time >= 10 && lastWeeklyReset !== date && now.getDay() === 4) {
         resetWeeklies();
       }
     }, 10000);
