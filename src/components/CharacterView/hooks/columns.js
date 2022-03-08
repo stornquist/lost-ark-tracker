@@ -13,9 +13,7 @@ export const useCharactersColumns = ({
       {
         name: 'Character',
         selector: row => (
-          <div className="group w-full" onClick={() => onCharacterClick(row)}>
-            {row.name}
-          </div>
+          <div onClick={() => onCharacterClick(row)}>{row.name}</div>
         ),
       },
       ...tasks.map(task => {
