@@ -35,20 +35,19 @@ const CharacterView = () => {
           onDelete={deleteTask}
         />
       )}
-      <div className="grid gap-2 grid-flow-col xl:w-1/5 lg:w-1/3 md:w-1/2 pt-4">
-        <Button
-          color="green"
-          size="md"
-          onClick={() => showCharacterModal(true)}
-          label="New character"
-        />
-        <Button
-          color="green"
-          size="md"
-          onClick={() => showTaskModal(true)}
-          label="New task"
-        />
-      </div>
+      <Button
+        color="green"
+        size="md"
+        onClick={() => showCharacterModal(true)}
+        label="New character"
+        className="mr-2"
+      />
+      <Button
+        color="green"
+        size="md"
+        onClick={() => showTaskModal(true)}
+        label="New task"
+      />
       <CharacterList
         setTask={task => {
           setTask(task);
