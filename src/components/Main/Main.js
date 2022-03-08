@@ -39,7 +39,11 @@ const Main = () => {
     };
   }, [resetDailies, resetWeeklies]);
 
-  return <CharacterView />;
+  return (
+    <div className="md:m-8 lg:m-24 grid grid-flow-row gap-16">
+      <CharacterView />
+    </div>
+  );
 };
 
 export default Main;

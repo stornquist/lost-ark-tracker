@@ -13,7 +13,7 @@ const CharacterView = () => {
   const [taskModal, showTaskModal] = useState(false);
 
   return (
-    <div className="md:m-8 lg:m-24">
+    <div>
       {characterModal && (
         <AddEditCharacter
           className="inline mr-2"
