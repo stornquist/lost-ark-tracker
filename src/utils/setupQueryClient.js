@@ -17,7 +17,6 @@ export const queryClient = new QueryClient({
 export const mutationDefaults = key => {
   return {
     onSuccess: () => {
-      console.log('invalidating: ', key);
       queryClient.invalidateQueries(key);
     },
   };
