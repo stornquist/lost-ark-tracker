@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import Checkbox from '../../Checkbox/Checkbox';
 
-export const useRapportColumns = ({ onCheckboxChange, setRapport }) =>
+export const useRapportColumns = ({
+  rapports,
+  onCheckboxChange,
+  setRapport,
+  hasCrystalAura,
+}) =>
   useMemo(
     () => [
       {
@@ -9,7 +14,10 @@ export const useRapportColumns = ({ onCheckboxChange, setRapport }) =>
         selector: row => <div onClick={() => setRapport(row)}>{row.name}</div>,
       },
       {
-        name: 'Instrument',
+        name: `Instrument (${
+          (hasCrystalAura ? 6 : 5) -
+          rapports.reduce((a, r) => a + r.instrument, 0)
+        })`,
         selector: row => (
           <div className="grid gap-2 grid-flow-col">
             <Checkbox
@@ -24,7 +32,9 @@ export const useRapportColumns = ({ onCheckboxChange, setRapport }) =>
         ),
       },
       {
-        name: 'Emote',
+        name: `Emote (${
+          (hasCrystalAura ? 6 : 5) - rapports.reduce((a, r) => a + r.emote, 0)
+        })`,
         selector: row => (
           <div className="grid gap-2 grid-flow-col">
             <Checkbox
@@ -39,5 +49,5 @@ export const useRapportColumns = ({ onCheckboxChange, setRapport }) =>
         ),
       },
     ],
-    [onCheckboxChange]
+    [onCheckboxChange, rapports]
   );

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import DataTable from 'react-data-table-component';
 import { useRapports, useUpsertRapport } from '../../utils/queries/rapports';
+import { CrystalAuraContext } from '../Main/Main';
 import { useRapportColumns } from './hooks/rapportColumns';
 
 const RapportList = ({ setRapport }) => {
   const { data: rapports = [] } = useRapports();
   const { mutate: upsertRapport } = useUpsertRapport();
+  const hasCrystalAura = useContext(CrystalAuraContext);
 
   const handleCheckboxChange = (data, type, count) => {
     const rapport = {
@@ -16,6 +18,8 @@ const RapportList = ({ setRapport }) => {
   };
 
   const columns = useRapportColumns({
+    hasCrystalAura,
+    rapports,
     onCheckboxChange: handleCheckboxChange,
     setRapport,
   });

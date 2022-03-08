@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createTheme } from 'react-data-table-component';
 import { useResetDailies, useResetWeeklies } from '../../utils/queries/reset';
 import CharacterView from '../CharacterView';
+import Checkbox from '../Checkbox/Checkbox';
 import RapportView from '../RapportView/RapportView';
 
 createTheme('custom', {
@@ -15,9 +16,21 @@ createTheme('custom', {
   },
 });
 
+export const CrystalAuraContext = React.createContext();
+
 const Main = () => {
   const { mutate: resetDailies } = useResetDailies();
   const { mutate: resetWeeklies } = useResetWeeklies();
+  const [hasCrystalAura, setHasCrystalAura] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.crystal_aura) {
+      localStorage.crystal_aura = 'true';
+      setHasCrystalAura(true);
+    } else {
+      setHasCrystalAura(JSON.parse(localStorage.crystal_aura));
+    }
+  }, [hasCrystalAura]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,10 +54,21 @@ const Main = () => {
   }, [resetDailies, resetWeeklies]);
 
   return (
-    <div className="md:m-8 lg:m-24 grid grid-flow-row gap-16">
-      <CharacterView />
-      <RapportView />
-    </div>
+    <CrystalAuraContext.Provider value={hasCrystalAura}>
+      <div className="md:m-8 lg:m-24 grid grid-flow-row gap-8">
+        <Checkbox
+          label="Crystalline Aura"
+          checked={hasCrystalAura}
+          onChange={() => {
+            localStorage.crystal_aura = JSON.stringify(!hasCrystalAura);
+            setHasCrystalAura(!hasCrystalAura);
+          }}
+          className="checked:bg-cyan-400"
+        />
+        <CharacterView />
+        <RapportView />
+      </div>
+    </CrystalAuraContext.Provider>
   );
 };
 
