@@ -55,7 +55,7 @@ const Modal = ({
             )}
             <div className="p-12">
               {fields.map((field, index) => (
-                <div>
+                <div key={field.name + index}>
                   {field.label && (
                     <p className="italic text-gray-400 text-sm">
                       {field.label}
@@ -79,7 +79,12 @@ const Modal = ({
                       className="px-2 py-1 rounded-sm text-gray-300 bg-gray-700 w-full"
                     >
                       {field.options.map(option => (
-                        <option value={option.value}>{option.label}</option>
+                        <option
+                          key={option.value + option.label}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
                       ))}
                     </select>
                   )}
