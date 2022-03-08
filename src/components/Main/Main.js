@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { createTheme } from 'react-data-table-component';
 import { useResetDailies, useResetWeeklies } from '../../utils/queries/reset';
 import CharacterView from '../CharacterView';
+import RapportView from '../RapportView/RapportView';
 
 createTheme('custom', {
   text: {
@@ -42,6 +43,7 @@ const Main = () => {
   return (
     <div className="md:m-8 lg:m-24 grid grid-flow-row gap-16">
       <CharacterView />
+      <RapportView />
     </div>
   );
 };
