@@ -3,12 +3,15 @@ import {
   resetDailyTasks,
   resetWeeklyTasks,
 } from '../../server/services/taskStatus';
+import { mutationDefaults } from '../setupQueryClient';
+
+const mutationOptions = mutationDefaults('task_statuses');
 
 export const useLastDailyReset = () =>
   useQuery(['reset', 'daily'], async () => localStorage.last_daily_reset);
 export const useLastWeeklyReset = () =>
   useQuery(['reset', 'weekly'], async () => localStorage.last_weekly_reset);
 export const useResetDailies = () =>
-  useMutation(['reset', 'daily'], async () => resetDailyTasks());
+  useMutation(async () => resetDailyTasks(), mutationOptions);
 export const useResetWeeklies = () =>
-  useMutation(['reset', 'weekly'], async () => resetWeeklyTasks());
+  useMutation(async () => resetWeeklyTasks(), mutationOptions);

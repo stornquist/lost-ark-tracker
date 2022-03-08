@@ -6,22 +6,25 @@ import {
   getTasks,
   updateTask,
 } from '../../server/services/tasks';
+import { mutationDefaults } from '../setupQueryClient';
+
+const mutationOptions = mutationDefaults('tasks');
 
 export const useTasks = () => useQuery('tasks', getTasks);
 export const useTask = id => useQuery(['tasks', id], async () => getTask(id));
 
 export const useUpsertTask = () =>
-  useMutation('tasks', async data => {
+  useMutation(async data => {
     if (data.id) {
       const { id, ...payload } = data;
       return updateTask(id, payload);
     }
 
     return createTask(data);
-  });
+  }, mutationOptions);
 
 export const useDeleteTask = () =>
-  useMutation('tasks', async data => {
+  useMutation(async data => {
     if (data.id) await deleteTask(data.id);
     else await deleteTask(data);
-  });
+  }, mutationOptions);
