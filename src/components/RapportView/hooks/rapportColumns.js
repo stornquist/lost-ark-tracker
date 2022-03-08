@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import Checkbox from '../../Checkbox/Checkbox';
 
-export const useRapportColumns = ({ onCheckboxChange }) =>
+export const useRapportColumns = ({ onCheckboxChange, setRapport }) =>
   useMemo(
     () => [
       {
         name: 'NPC',
-        selector: row => row.name,
+        selector: row => <div onClick={() => setRapport(row)}>{row.name}</div>,
       },
       {
         name: 'Instrument',

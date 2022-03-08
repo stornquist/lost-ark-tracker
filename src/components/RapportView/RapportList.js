@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { useRapports, useUpsertRapport } from '../../utils/queries/rapports';
 import { useRapportColumns } from './hooks/rapportColumns';
 
-const RapportList = () => {
+const RapportList = ({ setRapport }) => {
   const { data: rapports = [] } = useRapports();
   const { mutate: upsertRapport } = useUpsertRapport();
 
@@ -15,7 +15,10 @@ const RapportList = () => {
     upsertRapport(rapport);
   };
 
-  const columns = useRapportColumns({ onCheckboxChange: handleCheckboxChange });
+  const columns = useRapportColumns({
+    onCheckboxChange: handleCheckboxChange,
+    setRapport,
+  });
   return (
     <div
       style={{

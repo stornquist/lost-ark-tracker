@@ -7,6 +7,11 @@ const RapportView = () => {
   const [rapportModal, showRapportModal] = useState(false);
   const [rapport, setRapport] = useState(null);
 
+  const handleRapportClick = rapport => {
+    setRapport(rapport);
+    showRapportModal(true);
+  };
+
   return (
     <div>
       {rapportModal && (
@@ -25,7 +30,7 @@ const RapportView = () => {
         onClick={() => showRapportModal(true)}
         label="Add NPC"
       />
-      <RapportList />
+      <RapportList setRapport={handleRapportClick} />
     </div>
   );
 };
