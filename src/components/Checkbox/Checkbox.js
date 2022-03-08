@@ -3,15 +3,16 @@ import React from 'react';
 
 const Checkbox = ({ checked, onChange, ...rest }) => {
   const classes = cn(
-    'appearance-none w-4 h-4 bg-red-400 checked:bg-green-400 rounded-sm',
+    'appearance-none w-4 h-4 bg-red-400 checked:bg-green-400 rounded-sm relative',
     {
       // custom styled input
       'checked:after:block': true,
       'after:absolute': true,
       'after:hidden': true,
+      'checked:after:z-5': true,
       'checked:after:rotate-45': true,
-      'checked:after:left-[20px]': true,
-      'checked:after:top-[15px]': true,
+      'checked:after:left-[4px]': true,
+      'checked:after:top-[1px]': true,
       'checked:after:border-green-900': true,
       'checked:after:border-t-0': true,
       'checked:after:border-r-[4px]': true,

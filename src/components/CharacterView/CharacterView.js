@@ -38,7 +38,7 @@ const CharacterView = props => {
           onDelete={deleteTask}
         />
       )}
-      <div className="grid gap-2 grid-flow-col lg:w-1/4 md:w-1/2 pt-4">
+      <div className="grid gap-2 grid-flow-col xl:w-1/5 lg:w-1/3 md:w-1/2 pt-4">
         <Button
           color="green"
           size="md"
