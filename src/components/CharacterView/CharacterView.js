@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { useDeleteCharacter } from '../../utils/queries/characters';
 import { useDeleteTask } from '../../utils/queries/tasks';
 import AddEditCharacter from '../AddEditCharacter';
 import AddEditTask from '../AddEditTask/AddEditTask';
 import Button from '../Button';
 import CharacterList from './CharacterList';
 
-const CharacterView = props => {
+const CharacterView = () => {
   const { mutate: deleteTask } = useDeleteTask();
-  const { mutate: deleteCharacter } = useDeleteCharacter();
   const [character, setCharacter] = useState(null);
   const [task, setTask] = useState(null);
   const [characterModal, showCharacterModal] = useState(false);
@@ -24,7 +22,6 @@ const CharacterView = props => {
             setCharacter(null);
             showCharacterModal(false);
           }}
-          onDelete={deleteCharacter}
         />
       )}
       {taskModal && (
