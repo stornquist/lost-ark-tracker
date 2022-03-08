@@ -1,34 +1,18 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import Main from './components/Main';
 import { ToastContainer } from 'react-toastify';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createTheme } from 'react-data-table-component';
+import { queryClient } from './utils/setupQueryClient';
 
-const defaultOptions = {
-  staleTime: 10000,
-  onError: err => {
-    toast.error(err.message);
+createTheme('custom', {
+  text: {
+    primary: 'white',
+    secondary: 'white',
   },
-};
-
-export const queryClient = new QueryClient({
-  defaultOptions,
-});
-queryClient.setMutationDefaults('reset', {
-  ...defaultOptions,
-  onSettled: () => queryClient.invalidateQueries('task_statuses'),
-});
-queryClient.setMutationDefaults('characters', {
-  ...defaultOptions,
-  onSettled: () => queryClient.invalidateQueries('characters'),
-});
-queryClient.setMutationDefaults('tasks', {
-  ...defaultOptions,
-  onSettled: () => queryClient.invalidateQueries('tasks'),
-});
-queryClient.setMutationDefaults('task_statuses', {
-  ...defaultOptions,
-  onSettled: () => queryClient.invalidateQueries('task_statuses'),
+  background: {
+    default: '#493360',
+  },
 });
 
 function App() {

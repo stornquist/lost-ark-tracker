@@ -1,5 +1,5 @@
 import React from 'react';
-import DataTable, { createTheme } from 'react-data-table-component';
+import DataTable from 'react-data-table-component';
 import { useCharacters } from '../../utils/queries/characters';
 import { useTasks } from '../../utils/queries/tasks';
 import {
@@ -7,16 +7,6 @@ import {
   useUpsertTaskStatus,
 } from '../../utils/queries/taskStatuses';
 import { useCharactersColumns } from './hooks/columns';
-
-createTheme('custom', {
-  text: {
-    primary: 'white',
-    secondary: 'white',
-  },
-  background: {
-    default: '#493360',
-  },
-});
 
 const CharacterList = ({ setTask, setCharacter }) => {
   const { data: tasks = [] } = useTasks();
