@@ -71,14 +71,9 @@ export const resetWeeklyTasks = async () => {
   // weekly reset includes dailies so set all to false
   localStorage.task_statuses = JSON.stringify(
     taskStatuses.map(ts => {
-      const { value } = taskStatusSchema.validate(
-        {
-          ...ts,
-          completed: false,
-        },
-        { stripUnknown: true, allowUnknown: true }
-      );
-      return value;
+      const val = { ...ts, completed: false };
+      delete val.task;
+      return val;
     })
   );
   return (localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd'));
@@ -89,14 +84,12 @@ export const resetDailyTasks = async () => {
 
   localStorage.task_statuses = JSON.stringify(
     taskStatuses.map(ts => {
-      const { value } = taskStatusSchema.validate(
-        {
-          ...ts,
-          completed: ts.task.type === 'daily' ? false : ts.completed,
-        },
-        { stripUnknown: true, allowUnknown: true }
-      );
-      return value;
+      const val = {
+        ...ts,
+        completed: ts.task.type === 'daily' ? false : ts.completed,
+      };
+      delete val.task;
+      return val;
     })
   );
   return (localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd'));
