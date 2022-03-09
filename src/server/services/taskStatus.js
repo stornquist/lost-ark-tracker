@@ -20,9 +20,10 @@ export const getTaskStatuses = async () => {
   const statuses = JSON.parse(taskStatuses);
   const tasks = await getTasks();
 
-  return statuses.map(status => ({
+  return statuses.map((status, index) => ({
     ...status,
     task: tasks.find(t => t.id === status.task_id),
+    id: status.id ? status.id : index + 1,
   }));
 };
 
