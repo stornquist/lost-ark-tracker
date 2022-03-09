@@ -19,7 +19,7 @@ const AddEditCharacter = ({ character, onClose }) => {
   const { mutate: deleteCharacter } = useDeleteCharacter();
 
   const handleSubmit = form => {
-    upsertCharacter(form);
+    upsertCharacter({ ...character, ...form });
     onClose();
   };
 
