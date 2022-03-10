@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from 'react-query';
-import {
-  resetDailyTasks,
-  resetWeeklyTasks,
-} from '../../server/services/taskStatus';
+import { resetDailyTasks, resetWeeklyTasks } from '../../server/services/reset';
 import { mutationDefaults } from '../setupQueryClient';
 
-const mutationOptions = mutationDefaults('task_statuses');
+const mutationOptions = {
+  ...mutationDefaults('task_statuses'),
+  ...mutationDefaults('rapports'),
+};
 
 export const useLastDailyReset = () =>
   useQuery(['reset', 'daily'], async () => localStorage.last_daily_reset);

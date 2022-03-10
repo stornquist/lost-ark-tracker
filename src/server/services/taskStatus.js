@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { taskStatusSchema } from '../schemas/taskStatus';
 import { getTasks } from './tasks';
 
@@ -65,33 +64,4 @@ export const deleteTaskStatus = async id => {
   const taskStatuses = await getTaskStatus();
   const filtered = taskStatuses.filter(c => c.id !== id);
   localStorage.setItem('task_statuses', JSON.stringify(filtered));
-};
-
-export const resetWeeklyTasks = async () => {
-  const taskStatuses = await getTaskStatuses();
-  // weekly reset includes dailies so set all to false
-  localStorage.task_statuses = JSON.stringify(
-    taskStatuses.map(ts => {
-      const val = { ...ts, completed: false };
-      delete val.task;
-      return val;
-    })
-  );
-  return (localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd'));
-};
-
-export const resetDailyTasks = async () => {
-  const taskStatuses = await getTaskStatuses();
-
-  localStorage.task_statuses = JSON.stringify(
-    taskStatuses.map(ts => {
-      const val = {
-        ...ts,
-        completed: ts.task.type === 'daily' ? false : ts.completed,
-      };
-      delete val.task;
-      return val;
-    })
-  );
-  return (localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd'));
 };
