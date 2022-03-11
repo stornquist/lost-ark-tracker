@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { getRapports } from './rapports';
 import { getTaskStatuses } from './taskStatus';
 
@@ -21,7 +20,7 @@ export const resetWeeklyTasks = async () => {
       instrument: 0,
     }))
   );
-  return (localStorage.last_weekly_reset = format(new Date(), 'yyyy-MM-dd'));
+  return (localStorage.last_weekly_reset = new Date().getTime());
 };
 
 export const resetDailyTasks = async () => {
@@ -47,5 +46,5 @@ export const resetDailyTasks = async () => {
     }))
   );
 
-  return (localStorage.last_daily_reset = format(new Date(), 'yyyy-MM-dd'));
+  return (localStorage.last_daily_reset = new Date().getTime());
 };
