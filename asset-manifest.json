@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/lost-ark-tracker/static/css/main.cea3a264.css",
-    "main.js": "/lost-ark-tracker/static/js/main.a4ffe36d.js",
+    "main.js": "/lost-ark-tracker/static/js/main.f5ead0df.js",
     "index.html": "/lost-ark-tracker/index.html",
     "main.cea3a264.css.map": "/lost-ark-tracker/static/css/main.cea3a264.css.map",
-    "main.a4ffe36d.js.map": "/lost-ark-tracker/static/js/main.a4ffe36d.js.map"
+    "main.f5ead0df.js.map": "/lost-ark-tracker/static/js/main.f5ead0df.js.map"
   },
   "entrypoints": [
     "static/css/main.cea3a264.css",
-    "static/js/main.a4ffe36d.js"
+    "static/js/main.f5ead0df.js"
   ]
 }
