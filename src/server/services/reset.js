@@ -1,7 +1,9 @@
+import { addDays } from 'date-fns';
 import { getRapports } from './rapports';
 import { getTaskStatuses } from './taskStatus';
 
 export const resetWeeklyTasks = async () => {
+  console.debug('Resetting weeklies');
   const taskStatuses = await getTaskStatuses();
   const rapports = await getRapports();
   // weekly reset includes dailies so set all to false
@@ -20,10 +22,17 @@ export const resetWeeklyTasks = async () => {
       instrument: 0,
     }))
   );
-  return (localStorage.last_weekly_reset = new Date().getTime());
+
+  // set queue for next weekly reset
+  setTimeout(
+    resetWeeklyTasks,
+    addDays(new Date().setUTCHours(10, 0), 7).getTime() - new Date().getTime()
+  );
+  return (localStorage.last_weekly_reset = new Date().setUTCHours(10, 0));
 };
 
 export const resetDailyTasks = async () => {
+  console.debug('Resetting dailies');
   const taskStatuses = await getTaskStatuses();
   const rapports = await getRapports();
 
@@ -46,5 +55,10 @@ export const resetDailyTasks = async () => {
     }))
   );
 
-  return (localStorage.last_daily_reset = new Date().getTime());
+  setTimeout(
+    resetDailyTasks,
+    addDays(new Date().setUTCHours(10, 0), 1).getTime() - new Date().getTime()
+  );
+
+  return (localStorage.last_daily_reset = new Date().setUTCHours(10, 0));
 };

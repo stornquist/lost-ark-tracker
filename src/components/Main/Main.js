@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createTheme } from 'react-data-table-component';
-import { checkResetTaskStatuses } from '../../utils/reset';
+import { useQueryClient } from 'react-query';
+import { scheduleReset } from '../../utils/reset';
 import CharacterView from '../CharacterView';
 import Checkbox from '../Checkbox/Checkbox';
 import RapportView from '../RapportView/RapportView';
@@ -19,6 +20,7 @@ export const CrystalAuraContext = React.createContext();
 
 const Main = () => {
   const [hasCrystalAura, setHasCrystalAura] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!localStorage.crystal_aura) {
@@ -30,20 +32,8 @@ const Main = () => {
   }, [hasCrystalAura]);
 
   useEffect(() => {
-    if (isNaN(Number(localStorage.last_daily_reset)))
-      localStorage.last_daily_reset = new Date(
-        localStorage.last_daily_reset || 0
-      ).getTime();
-    if (isNaN(Number(localStorage.last_weekly_reset)))
-      localStorage.last_weekly_reset = new Date(
-        localStorage.last_weekly_reset || 0
-      ).getTime();
-
-    const interval = setInterval(checkResetTaskStatuses, 10000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [checkResetTaskStatuses]);
+    scheduleReset(queryClient);
+  }, [scheduleReset]);
 
   return (
     <CrystalAuraContext.Provider value={hasCrystalAura}>
