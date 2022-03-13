@@ -1,64 +1,128 @@
-import { addDays } from 'date-fns';
-import { getRapports } from './rapports';
-import { getTaskStatuses } from './taskStatus';
+import { addDays, subDays } from 'date-fns';
+import { connection } from '../database/db';
+
+export const getDailyReset = async () => {
+  const resets = await connection.select({
+    from: 'resets',
+    where: {
+      type: 'daily',
+    },
+  });
+  if (!resets.length) {
+    const today = new Date(new Date().setUTCHours(10, 0, 0));
+    const rs = await connection.insert({
+      into: 'resets',
+      values: [{ type: 'daily', date: today }],
+      return: true,
+    });
+    return rs[0];
+  }
+
+  return resets[0];
+};
+
+export const getWeeklyReset = async () => {
+  const resets = await connection.select({
+    from: 'resets',
+    where: {
+      type: 'weekly',
+    },
+  });
+  if (!resets.length) {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const lastThursday = subDays(
+      new Date(addDays(now, (4 - currentDay + 7) % 7).setUTCHours(10, 0, 0)),
+      7
+    );
+    const rs = await connection.insert({
+      into: 'resets',
+      values: [{ type: 'weekly', date: lastThursday }],
+      return: true,
+    });
+    return rs[0];
+  }
+
+  return resets[0];
+};
 
 export const resetWeeklyTasks = async () => {
   console.debug('Resetting weeklies');
-  const taskStatuses = await getTaskStatuses();
-  const rapports = await getRapports();
   // weekly reset includes dailies so set all to false
-  localStorage.task_statuses = JSON.stringify(
-    taskStatuses.map(ts => {
-      const val = { ...ts, completed: false };
-      delete val.task;
-      return val;
-    })
-  );
+  await connection.update({
+    in: 'task_statuses',
+    set: {
+      completed: false,
+    },
+  });
 
-  localStorage.rapports = JSON.stringify(
-    rapports.map(r => ({
-      ...r,
+  await connection.update({
+    in: 'rapports',
+    set: {
       emote: 0,
       instrument: 0,
-    }))
-  );
+    },
+  });
 
   // set queue for next weekly reset
   setTimeout(
     resetWeeklyTasks,
     addDays(new Date().setUTCHours(10, 0), 7).getTime() - new Date().getTime()
   );
-  return (localStorage.last_weekly_reset = new Date().setUTCHours(10, 0));
+
+  connection.update({
+    in: 'resets',
+    set: {
+      date: new Date(new Date().setUTCHours(10, 0, 0)),
+    },
+    where: {
+      type: 'weekly',
+    },
+  });
 };
 
 export const resetDailyTasks = async () => {
   console.debug('Resetting dailies');
-  const taskStatuses = await getTaskStatuses();
-  const rapports = await getRapports();
 
-  localStorage.task_statuses = JSON.stringify(
-    taskStatuses.map(ts => {
-      const val = {
-        ...ts,
-        completed: ts.task.type === 'daily' ? false : ts.completed,
-      };
-      delete val.task;
-      return val;
-    })
-  );
+  const dailyTasks = await connection.select({
+    from: 'tasks',
+    where: {
+      type: 'daily',
+    },
+  });
 
-  localStorage.rapports = JSON.stringify(
-    rapports.map(r => ({
-      ...r,
+  await connection.update({
+    in: 'task_statuses',
+    set: {
+      completed: false,
+    },
+    where: {
+      id: {
+        in: dailyTasks.map(t => t.id),
+      },
+    },
+  });
+
+  await connection.update({
+    in: 'rapport',
+    set: {
       emote: 0,
       instrument: 0,
-    }))
-  );
+    },
+  });
 
   setTimeout(
     resetDailyTasks,
     addDays(new Date().setUTCHours(10, 0), 1).getTime() - new Date().getTime()
   );
 
-  return (localStorage.last_daily_reset = new Date().setUTCHours(10, 0));
+  connection.update({
+    in: 'resets',
+    set: {
+      date: new Date(new Date().setUTCHours(10, 0, 0)),
+    },
+    where: {
+      type: 'daily',
+    },
+  });
 };

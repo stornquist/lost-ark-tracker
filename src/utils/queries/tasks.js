@@ -8,7 +8,7 @@ import {
 } from '../../server/services/tasks';
 import { mutationDefaults } from '../setupQueryClient';
 
-const mutationOptions = mutationDefaults('tasks');
+const mutationOptions = mutationDefaults(['tasks', 'task_statuses']);
 
 export const useTasks = () => useQuery('tasks', getTasks);
 export const useTask = id => useQuery(['tasks', id], async () => getTask(id));

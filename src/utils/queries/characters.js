@@ -8,7 +8,7 @@ import {
 } from '../../server/services/characters';
 import { mutationDefaults } from '../setupQueryClient';
 
-const mutationOptions = mutationDefaults('characters');
+const mutationOptions = mutationDefaults('characters', 'task_statuses');
 
 export const useCharacters = () => useQuery('characters', getCharacters);
 export const useCharacter = id =>

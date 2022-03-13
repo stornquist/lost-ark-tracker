@@ -1,35 +1,17 @@
-import { subDays } from 'date-fns';
 import { addDays } from 'date-fns/esm';
-import { resetDailyTasks, resetWeeklyTasks } from '../server/services/reset';
+import {
+  getDailyReset,
+  getWeeklyReset,
+  resetDailyTasks,
+  resetWeeklyTasks,
+} from '../server/services/reset';
 
-export const scheduleReset = queryClient => {
-  if (!localStorage.last_daily_reset) {
-    localStorage.lastDailyReset = new Date(
-      new Date().setUTCHours(10, 0, 0)
-    ).getTime();
-  }
-
-  if (
-    !localStorage.last_weekly_reset ||
-    (Number(localStorage.last_weekly_reset) &&
-      new Date(Number(localStorage.last_wekely_reset)).getDay() !== 4 &&
-      new Date(Number(localStorage.last_weekly_reset)).getUTCHours() !== 10)
-  ) {
-    const now = new Date();
-    const currentDay = now.getDay();
-    const lastThursday = subDays(
-      new Date(addDays(now, (4 - currentDay + 7) % 7).setUTCHours(10, 0, 0)),
-      7
-    );
-    localStorage.last_weekly_reset = lastThursday.getTime();
-  }
-
-  let lastDailyReset = new Date(Number(localStorage.last_daily_reset));
-  let lastWeeklyReset = new Date(Number(localStorage.last_weekly_reset));
+export const scheduleReset = async queryClient => {
+  const lastDailyReset = await getDailyReset();
+  const lastWeeklyReset = await getWeeklyReset();
 
   const lastDailyResetPlusOneDay = addDays(lastDailyReset, 1);
   const lastWeeklyResetPlusSevenDays = addDays(lastWeeklyReset, 7);
-  console.log(lastWeeklyReset);
 
   // if last reset was more than a day ago
   if (lastDailyResetPlusOneDay.getTime() < new Date().setUTCHours(10, 0)) {
@@ -48,8 +30,6 @@ export const scheduleReset = queryClient => {
   const weeklyTimer =
     addDays(new Date(Number(localStorage.last_weekly_reset)), 7).getTime() -
     new Date().getTime();
-  console.log('dailyTimer: ', dailyTimer);
-  console.log('weeklyTimer: ', weeklyTimer);
 
   setTimeout(resetDailyTasks, dailyTimer);
 

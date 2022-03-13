@@ -4,6 +4,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createTheme } from 'react-data-table-component';
 import { queryClient } from './utils/setupQueryClient';
+import { initDB } from './server/database/db';
+
+initDB();
 
 createTheme('custom', {
   text: {

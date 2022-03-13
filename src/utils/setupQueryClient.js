@@ -15,8 +15,17 @@ export const queryClient = new QueryClient({
 });
 
 export const mutationDefaults = key => {
+  if (Array.isArray(key)) {
+    return {
+      onSettled: () => {
+        for (const k of key) {
+          queryClient.invalidateQueries(k);
+        }
+      },
+    };
+  }
   return {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(key);
     },
   };

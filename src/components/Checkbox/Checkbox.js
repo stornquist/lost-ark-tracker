@@ -1,7 +1,18 @@
 import cn from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Checkbox = ({ checked, onChange, label, className, ...rest }) => {
+  const [stateChecked, setStateChecked] = useState(checked);
+
+  useEffect(() => {
+    setStateChecked(checked);
+  }, [checked, setStateChecked]);
+
+  const handleChange = () => {
+    setStateChecked(!stateChecked);
+    onChange();
+  };
+
   const classes = cn(
     'appearance-none w-4 h-4 bg-gray-500 checked:bg-green-400 rounded-sm relative',
     {
@@ -31,8 +42,8 @@ const Checkbox = ({ checked, onChange, label, className, ...rest }) => {
       <input
         type="checkbox"
         className={classes}
-        checked={checked}
-        onChange={onChange}
+        checked={stateChecked}
+        onChange={handleChange}
         {...rest}
       />
       {label && <p className="pl-2">{label}</p>}

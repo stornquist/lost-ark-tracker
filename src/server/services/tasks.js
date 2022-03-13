@@ -1,24 +1,29 @@
+import { connection } from '../database/db';
 import { taskSchema } from '../schemas/tasks';
 import { getCharacters } from './characters';
-import { createTaskStatus, getTaskStatuses } from './taskStatus';
+import { deleteTaskStatusesByTaskId } from './taskStatus';
 
 const Errors = {
   notFound: 'task not found',
 };
 
 export const getTask = async id => {
-  const tasks = await getTasks();
-  const task = tasks.find(c => c.id === id);
-  if (!task) throw new Error(Errors.notFound);
+  const tasks = await connection.select({
+    from: 'tasks',
+    where: { id },
+  });
+  if (!tasks.length) throw new Error(Errors.notFound);
 
-  return task;
+  return tasks[0];
 };
 
 export const getTasks = async () => {
-  const tasks = localStorage.tasks;
-  if (!tasks) return [];
+  const tasks = await connection.select({
+    from: 'tasks',
+  });
+  if (!tasks.length) return [];
 
-  return JSON.parse(tasks);
+  return tasks;
 };
 
 export const createTask = async data => {
@@ -28,23 +33,26 @@ export const createTask = async data => {
   });
   if (error) throw new Error(error);
 
-  const tasks = await getTasks();
-  const id = tasks.length ? Math.max(...tasks.map(c => c.id)) + 1 : 1;
-
-  tasks.push({ id, ...value });
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+  const task = (
+    await connection.insert({
+      into: 'tasks',
+      values: [value],
+      return: true,
+    })
+  )[0];
 
   // create task status for each character
   const characters = await getCharacters();
-  for (const char of characters) {
-    await createTaskStatus({
-      task_id: id,
-      character_id: char.id,
+  connection.insert({
+    into: 'task_statuses',
+    values: characters.map(c => ({
+      task_id: task.id,
+      character_id: c.id,
       completed: false,
-    });
-  }
+    })),
+  });
 
-  return { id, ...value };
+  return task;
 };
 
 export const updateTask = async (id, data) => {
@@ -54,24 +62,21 @@ export const updateTask = async (id, data) => {
   });
   if (error) throw new Error(error);
 
-  const tasks = await getTasks();
-  const index = tasks.findIndex(c => c.id === id);
-  if (index === -1) throw new Error(Errors.notFound);
+  await connection.update({
+    in: 'tasks',
+    set: value,
+    where: { id },
+  });
 
-  tasks[index] = { ...tasks[index], ...value };
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  return { ...tasks[index], ...value };
+  return { id, ...data };
 };
 
 export const deleteTask = async id => {
-  // delete task
-  await getTask(id);
-  const tasks = await getTasks();
-  const fTasks = tasks.filter(c => c.id !== id);
-  localStorage.setItem('tasks', JSON.stringify(fTasks));
+  await connection.remove({
+    from: 'tasks',
+    where: { id },
+  });
 
-  // delete all task statuses for task
-  const taskStauses = await getTaskStatuses();
-  const fTaskStauses = taskStauses.filter(ts => ts.task_id !== id);
-  localStorage.setItem('task_statuses', JSON.stringify(fTaskStauses));
+  // remove task statuses
+  await deleteTaskStatusesByTaskId(id);
 };
