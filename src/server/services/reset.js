@@ -1,4 +1,6 @@
 import { addDays, subDays } from 'date-fns';
+import { toast } from 'react-toastify';
+import { queryClient } from '../../utils/setupQueryClient';
 import { connection } from '../database/db';
 
 export const getDailyReset = async () => {
@@ -48,11 +50,21 @@ export const getWeeklyReset = async () => {
 
 export const resetWeeklyTasks = async () => {
   console.debug('Resetting weeklies');
-  // weekly reset includes dailies so set all to false
+  const weeklyTasks = await connection.select({
+    where: {
+      type: 'weekly',
+    },
+  });
+
   await connection.update({
     in: 'task_statuses',
     set: {
       completed: false,
+    },
+    where: {
+      id: {
+        in: weeklyTasks.map(t => t.id),
+      },
     },
   });
 
@@ -79,6 +91,8 @@ export const resetWeeklyTasks = async () => {
       type: 'weekly',
     },
   });
+  toast.info('Weekly tasks have been reset.');
+  queryClient.invalidateQueries();
 };
 
 export const resetDailyTasks = async () => {
@@ -125,4 +139,6 @@ export const resetDailyTasks = async () => {
       type: 'daily',
     },
   });
+  toast.info('Daily tasks have been reset.');
+  queryClient.invalidateQueries();
 };
