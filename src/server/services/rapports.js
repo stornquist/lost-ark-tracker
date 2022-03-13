@@ -1,3 +1,4 @@
+import { connection } from '../database/db';
 import { rapportSchema } from '../schemas/rapport';
 
 const Errors = {
@@ -5,18 +6,22 @@ const Errors = {
 };
 
 export const getRapport = async id => {
-  const rapports = await getRapports();
-  const rapport = rapports.find(c => c.id === id);
-  if (!rapport) throw new Error(Errors.notFound);
+  const rapports = await connection.select({
+    from: 'rapports',
+    where: { id },
+  });
+  if (!rapports.length) throw new Error(Errors.notFound);
 
-  return rapport;
+  return rapports[0];
 };
 
 export const getRapports = async () => {
-  const rapports = localStorage.rapports;
-  if (!rapports) return [];
+  const rapports = await connection.select({
+    from: 'rapports',
+  });
+  if (!rapports.length) return [];
 
-  return JSON.parse(rapports);
+  return rapports;
 };
 
 export const createRapport = async data => {
@@ -26,13 +31,13 @@ export const createRapport = async data => {
   });
   if (error) throw new Error(error);
 
-  const rapports = await getRapports();
-  const id = rapports.length ? Math.max(...rapports.map(c => c.id)) + 1 : 1;
+  const rapports = await connection.insert({
+    into: 'rapports',
+    values: [value],
+    return: true,
+  });
 
-  rapports.push({ id, ...value });
-  localStorage.setItem('rapports', JSON.stringify(rapports));
-
-  return { id, ...value };
+  return rapports[0];
 };
 
 export const updateRapport = async (id, data) => {
@@ -42,19 +47,18 @@ export const updateRapport = async (id, data) => {
   });
   if (error) throw new Error(error);
 
-  const rapports = await getRapports();
-  const index = rapports.findIndex(c => c.id === id);
-  if (index === -1) throw new Error(Errors.notFound);
+  connection.update({
+    in: 'rapports',
+    set: value,
+    where: { id },
+  });
 
-  rapports[index] = { ...rapports[index], ...value };
-  localStorage.setItem('rapports', JSON.stringify(rapports));
-  return { ...rapports[index], ...value };
+  return { id, ...data };
 };
 
 export const deleteRapport = async id => {
-  // delete rapport
-  await getRapport(id);
-  const rapports = await getRapports();
-  const filteredRapports = rapports.filter(c => c.id !== id);
-  localStorage.setItem('rapports', JSON.stringify(filteredRapports));
+  await connection.remove({
+    from: 'rapports',
+    where: { id },
+  });
 };

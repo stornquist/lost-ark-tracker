@@ -1,24 +1,31 @@
+import { connection } from '../database/db';
 import { characterSchema } from '../schemas/character';
 import { getTasks } from './tasks';
-import { createTaskStatus, getTaskStatuses } from './taskStatus';
+import { deleteTaskStatusesByCharacterId } from './taskStatus';
 
 const Errors = {
   notFound: 'character not found',
 };
 
 export const getCharacter = async id => {
-  const characters = await getCharacters();
-  const character = characters.find(c => c.id === id);
+  const character = await connection.select({
+    from: 'characters',
+    where: {
+      id,
+    },
+  });
   if (!character) throw new Error(Errors.notFound);
 
   return character;
 };
 
 export const getCharacters = async () => {
-  const characters = localStorage.characters;
+  const characters = await connection.select({
+    from: 'characters',
+  });
   if (!characters) return [];
 
-  return JSON.parse(characters);
+  return characters;
 };
 
 export const createCharacter = async data => {
@@ -28,22 +35,25 @@ export const createCharacter = async data => {
   });
   if (error) throw new Error(error);
 
-  const characters = await getCharacters();
-  const id = characters.length ? Math.max(...characters.map(c => c.id)) + 1 : 1;
-
-  characters.push({ id, ...value });
-  localStorage.setItem('characters', JSON.stringify(characters));
+  const character = (
+    await connection.insert({
+      into: 'characters',
+      values: [value],
+      return: true,
+    })
+  )[0];
 
   const tasks = await getTasks();
-  for (const task of tasks) {
-    await createTaskStatus({
+  await connection.insert({
+    into: 'task_statuses',
+    values: tasks.map(task => ({
       task_id: task.id,
-      character_id: id,
+      character_id: character.id,
       completed: false,
-    });
-  }
+    })),
+  });
 
-  return { id, ...value };
+  return character;
 };
 
 export const updateCharacter = async (id, data) => {
@@ -53,26 +63,24 @@ export const updateCharacter = async (id, data) => {
   });
   if (error) throw new Error(error);
 
-  const characters = await getCharacters();
-  const index = characters.findIndex(c => c.id === id);
-  if (index === -1) throw new Error(Errors.notFound);
+  await connection.update({
+    in: 'characters',
+    where: {
+      id,
+    },
+    set: value,
+  });
 
-  characters[index] = { ...characters[index], ...value };
-  localStorage.setItem('characters', JSON.stringify(characters));
-  return { ...characters[index], ...value };
+  return { id, ...data };
 };
 
 export const deleteCharacter = async id => {
   // delete character
-  await getCharacter(id);
-  const characters = await getCharacters();
-  const filteredCharacters = characters.filter(c => c.id !== id);
-  localStorage.setItem('characters', JSON.stringify(filteredCharacters));
+  await connection.remove({
+    from: 'characters',
+    where: { id },
+  });
 
   // delete character task_statuses
-  const taskStatuses = await getTaskStatuses();
-  const filteredTaskStatuses = taskStatuses.filter(
-    ts => ts.character_id !== id
-  );
-  localStorage.setItem('task_statuses', JSON.stringify(filteredTaskStatuses));
+  await deleteTaskStatusesByCharacterId(id);
 };
