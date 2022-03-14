@@ -20,7 +20,7 @@ export const getDailyReset = async () => {
     return rs[0];
   }
 
-  return resets[0];
+  return resets[0].date;
 };
 
 export const getWeeklyReset = async () => {
@@ -42,39 +42,38 @@ export const getWeeklyReset = async () => {
       values: [{ type: 'weekly', date: lastThursday }],
       return: true,
     });
-    return rs[0];
+    return rs[0].date;
   }
 
-  return resets[0];
+  return resets[0].date;
 };
 
 export const resetWeeklyTasks = async () => {
   console.debug('Resetting weeklies');
   const weeklyTasks = await connection.select({
+    from: 'resets',
     where: {
       type: 'weekly',
     },
   });
 
-  await connection.update({
-    in: 'task_statuses',
-    set: {
-      completed: false,
+  const resetTargets = [
+    {
+      table: 'task_statuses',
+      set: { completed: false },
+      where: { id: { in: weeklyTasks.map(t => t.id) } },
     },
-    where: {
-      id: {
-        in: weeklyTasks.map(t => t.id),
-      },
-    },
-  });
+    { table: 'rapports', set: { emote: 0, instrument: 0 } },
+  ];
 
-  await connection.update({
-    in: 'rapports',
-    set: {
-      emote: 0,
-      instrument: 0,
-    },
-  });
+  for (const target of resetTargets) {
+    const { table, set, where } = target;
+    await connection.update({
+      in: table,
+      set,
+      where,
+    });
+  }
 
   // set queue for next weekly reset
   setTimeout(
@@ -105,25 +104,23 @@ export const resetDailyTasks = async () => {
     },
   });
 
-  await connection.update({
-    in: 'task_statuses',
-    set: {
-      completed: false,
+  const resetTargets = [
+    {
+      table: 'task_statuses',
+      set: { completed: false },
+      where: { id: { in: dailyTasks.map(t => t.id) } },
     },
-    where: {
-      id: {
-        in: dailyTasks.map(t => t.id),
-      },
-    },
-  });
+    { table: 'rapports', set: { emote: 0, instrument: 0 } },
+  ];
 
-  await connection.update({
-    in: 'rapport',
-    set: {
-      emote: 0,
-      instrument: 0,
-    },
-  });
+  for (const target of resetTargets) {
+    const { table, set, where } = target;
+    await connection.update({
+      in: table,
+      set,
+      where,
+    });
+  }
 
   setTimeout(
     resetDailyTasks,
