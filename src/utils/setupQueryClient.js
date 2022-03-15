@@ -28,5 +28,27 @@ export const mutationDefaults = key => {
     onSettled: () => {
       queryClient.invalidateQueries(key);
     },
+    onMutate: async data => {
+      if ('id' in data) {
+        await queryClient.cancelQueries(key);
+        const oldData = queryClient.getQueryData(key);
+
+        queryClient.setQueryData(key, old => {
+          const newVals = old.map(o => {
+            if (o.id === data.id) return { ...o, ...data };
+            return o;
+          });
+          return [...newVals];
+        });
+
+        return oldData;
+      }
+    },
+    onError: (err, data, old) => {
+      if (old) {
+        queryClient.setQueryData(key, old);
+      }
+      toast.error(err);
+    },
   };
 };

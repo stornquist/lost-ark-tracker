@@ -49,5 +49,5 @@ export const useRapportColumns = ({
         ),
       },
     ],
-    [onCheckboxChange, rapports]
+    [onCheckboxChange, rapports, setRapport, hasCrystalAura]
   );

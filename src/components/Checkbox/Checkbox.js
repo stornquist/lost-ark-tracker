@@ -1,15 +1,8 @@
 import cn from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 const Checkbox = ({ checked, onChange, label, className, ...rest }) => {
-  const [stateChecked, setStateChecked] = useState(checked);
-
-  useEffect(() => {
-    setStateChecked(checked);
-  }, [checked, setStateChecked]);
-
   const handleChange = () => {
-    setStateChecked(!stateChecked);
     onChange();
   };
 
@@ -42,7 +35,7 @@ const Checkbox = ({ checked, onChange, label, className, ...rest }) => {
       <input
         type="checkbox"
         className={classes}
-        checked={stateChecked}
+        checked={checked}
         onChange={handleChange}
         {...rest}
       />
