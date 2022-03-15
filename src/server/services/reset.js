@@ -61,7 +61,7 @@ export const resetWeeklyTasks = async () => {
     {
       table: 'task_statuses',
       set: { completed: false },
-      where: { id: { in: weeklyTasks.map(t => t.id) } },
+      where: { task_id: { in: weeklyTasks.map(t => t.id) } },
     },
     { table: 'rapports', set: { emote: 0, instrument: 0 } },
   ];
@@ -108,7 +108,7 @@ export const resetDailyTasks = async () => {
     {
       table: 'task_statuses',
       set: { completed: false },
-      where: { id: { in: dailyTasks.map(t => t.id) } },
+      where: { task_id: { in: dailyTasks.map(t => t.id) } },
     },
     { table: 'rapports', set: { emote: 0, instrument: 0 } },
   ];
