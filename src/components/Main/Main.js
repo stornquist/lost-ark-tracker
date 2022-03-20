@@ -37,7 +37,7 @@ const Main = () => {
 
   return (
     <CrystalAuraContext.Provider value={hasCrystalAura}>
-      <div className="md:m-8 lg:m-24 grid grid-flow-row gap-8">
+      <div className="md:m-8 lg:mx-24 lg:my-16 grid grid-flow-row gap-8">
         <Checkbox
           label="Crystalline Aura"
           checked={hasCrystalAura}
